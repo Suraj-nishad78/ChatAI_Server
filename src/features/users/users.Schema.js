@@ -9,7 +9,7 @@ const UsersSchema = mongoose.Schema({
         type:String,
         required:true
     },
-    email:{
+    imageURL:{
         type:String,
         required:true
     },

@@ -41,12 +41,12 @@ const authGoogleCallback = async (req, res) => {
     const user = userInfoResponse.data;
     const password = Math.floor(100000 * Math.random * 900000);
     const encryptPassword = await bcrypt.hash(password.toString(), 10);
-    console.log(user);
 
     const newUser = {
       name: user.name,
       email: user.email,
-      imageURL:user.picture,
+      imageURL:
+        "https://st4.depositphotos.com/11634452/21365/v/450/depositphotos_213659488-stock-illustration-picture-profile-icon-human-people.jpg",
       password: encryptPassword,
     };
     const checkEmail = await UsersModel.findOne({ email: user.email });
