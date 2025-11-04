@@ -20,7 +20,7 @@ const userSignup = async (req, res) => {
     const { name, email, password } = req.body;
     const checkEmail = await UsersModel.findOne({ email });
     if (checkEmail) {
-      return res.status(403).json({
+      return res.status(200).json({
         status: "Failed",
         msg: "This email already exist in the system.",
       });
@@ -37,7 +37,7 @@ const userSignup = async (req, res) => {
     return res.status(201).json({
       status: "Success",
       msg: "User signup successfully!",
-      user,
+      userId:user._id,
     });
   } catch (e) {
     console.log("Error while sign up: ", e);
@@ -53,16 +53,16 @@ const userSignin = async (req, res) => {
     const { email, password } = req.body;
     const user = await UsersModel.findOne({ email });
     if (!user) {
-      return res.status(403).json({
+      return res.status(200).json({
         status: "Failed",
-        msg: "You have entered wrong email!",
+        msg: "You have entered a wrong email!",
       });
     }
     const checkPassword = await bcrypt.compare(password, user.password);
     if (!checkPassword) {
-      return res.status(402).json({
+      return res.status(200).json({
         status: "Failed",
-        msg: "You have entered wrong password!",
+        msg: "You have entered a wrong password!",
       });
     }
 
@@ -76,7 +76,7 @@ const userSignin = async (req, res) => {
       .json({
         status: "Success",
         msg: "User sign in successfully!",
-        token,
+        userId: user._id,
       });
   } catch (e) {
     console.log("Error while sign in: ", e);
@@ -90,7 +90,7 @@ const userSignin = async (req, res) => {
 const getUserDetail = async (req, res) => {
   try {
     const { userId } = req.body;
-    const user = await UsersModel.findOne({ _id: userId });
+    const user = await UsersModel.findOne({ _id: userId }).select("-password");
     if (!user) {
       return res.status(401).json({
         status: "Failed",
@@ -127,7 +127,7 @@ const addImage = async (req, res) => {
     }
     return res.status(200).json({
       status: "Success",
-      user:updatedUser
+      user: updatedUser,
     });
   } catch (e) {
     console.log("Error occured while adding image: ", e);
@@ -138,4 +138,34 @@ const addImage = async (req, res) => {
   }
 };
 
-export { getAllUsers, userSignin, userSignup, getUserDetail, addImage };
+const deleteUser = async (req, res) => {
+  try {
+    const { userId } = req.body;
+    const user = await UsersModel.findByIdAndDelete(userId);
+    if (!user) {
+      return res.status(403).json({
+        status: "Failed",
+        msg: "User Deletion Faild.",
+      });
+    }
+    return res.status(200).json({
+      status: "Success",
+      msg: "User Deleted Successfully!",
+    });
+  } catch (e) {
+    console.log("Error occured while deleting user: ", e);
+    return res.status(500).json({
+      status: "Failed",
+      msg: "Something went wrong. Please try again!",
+    });
+  }
+};
+
+export {
+  getAllUsers,
+  userSignin,
+  userSignup,
+  getUserDetail,
+  addImage,
+  deleteUser,
+};

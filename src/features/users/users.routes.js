@@ -9,5 +9,6 @@ router.post("/signin", userCtrl.userSignin);
 router.post("/signup", userCtrl.userSignup);
 router.post("/userDetails", userCtrl.getUserDetail);
 router.patch("/updateProfileImage", userCtrl.addImage);
+router.delete("/delete", userCtrl.deleteUser);
 
 export default router;
