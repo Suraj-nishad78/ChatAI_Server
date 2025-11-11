@@ -3,7 +3,6 @@ import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import { GoogleGenAI } from "@google/genai";
 
 dotenv.config();
 
@@ -29,35 +28,9 @@ app.use("/users", userRoutes);
 app.get("/auth/google", google.authGoogle);
 app.get("/auth/google/callback", google.authGoogleCallback);
 
-//google Routes
-
-//ChatGPT Api Call
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-async function generateContent(prompt) {
-  try {
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-    });
-    return response.text;
-  } catch (error) {
-    console.error("Error fetching data from ChatGPT:", error);
-    throw error;
-  }
-}
-
+//Test Routes
 app.get("/", (req, res) => {
   res.send("Hello world :)");
-});
-
-app.post("/fetch-data", async (req, res) => {
-  const { query } = req.body;
-  try {
-    const data = await generateContent(query);
-    res.json({ data });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch data" });
-  }
 });
 
 app.listen(process.env.PORT, () => {
